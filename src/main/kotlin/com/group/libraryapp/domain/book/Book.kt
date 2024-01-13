@@ -6,7 +6,7 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 
 @Entity
-class Book(
+class Book constructor(
     val name: String,
 
     @Id

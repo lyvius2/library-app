@@ -8,7 +8,7 @@ import javax.persistence.Id
 import javax.persistence.ManyToOne
 
 @Entity
-class UserLoanHistory (
+class UserLoanHistory constructor(
     @ManyToOne
     val user: User,
 
