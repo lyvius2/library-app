@@ -12,4 +12,7 @@ public class BookCreateRequest {
     return name;
   }
 
+  public BookCreateRequest(String name) {
+    this.name = name;
+  }
 }

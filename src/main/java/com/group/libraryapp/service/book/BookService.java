@@ -55,7 +55,7 @@ public class BookService {
 
     // 3-1. 대출중인 책이면 예외
     if (userLoanHistoryRepository.existsByBookNameAndIsReturn(request.getBookName(), false)) {
-      throw new IllegalArgumentException();
+      throw new IllegalArgumentException("이미 대출 중인 책입니다.");
     }
 
     // 3-2. 대출 처리
@@ -85,7 +85,7 @@ public class BookService {
     UserLoanHistory history = userLoanHistoryRepository
         .findByUserIdAndBookName(user.getId(), request.getBookName());
     if (history == null) {
-      throw new IllegalArgumentException();
+      throw new IllegalArgumentException("책이 대출된 적이 없습니다.");
     }
 
     // is_return -> true (반납처리)
