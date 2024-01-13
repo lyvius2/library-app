@@ -1,5 +1,8 @@
 package com.group.libraryapp.domain.user;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import javax.persistence.*;
 
 // 아니~~ SQL을 안쓴다는게 무슨 말이여?!!
@@ -45,10 +48,12 @@ public class User {
     this.name = name;
   }
 
+  @NotNull
   public String getName() {
     return name;
   }
 
+  @Nullable
   public Integer getAge() {
     return age;
   }
