@@ -3,12 +3,11 @@ package com.group.libraryapp.service.book;
 import com.group.libraryapp.domain.book.Book;
 import com.group.libraryapp.domain.book.BookRepository;
 import com.group.libraryapp.domain.user.User;
-import com.group.libraryapp.domain.user.UserLoanHistory;
-import com.group.libraryapp.domain.user.UserLoanHistoryRepository;
 import com.group.libraryapp.domain.user.UserRepository;
-import com.group.libraryapp.dto.book.BookCreateRequest;
-import com.group.libraryapp.dto.book.BookLoanRequest;
-import com.group.libraryapp.dto.book.BookReturnRequest;
+import com.group.libraryapp.domain.user.loanhistory.UserLoanHistoryRepository;
+import com.group.libraryapp.dto.book.request.BookLoanRequest;
+import com.group.libraryapp.dto.book.request.BookRequest;
+import com.group.libraryapp.dto.book.request.BookReturnRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,67 +29,26 @@ public class BookService {
   }
 
   @Transactional
-  public void createNewBook(BookCreateRequest request) {
-    Book book = new Book(request.getName(), null);
-    bookRepository.save(book);
+  public void saveBook(BookRequest request) {
+    Book newBook = new Book(request.getName(), null);
+    bookRepository.save(newBook);
   }
 
-  // 1. 들어오는 책 이름으로 책을 찾아요.
-  // 2. 들어오는 유저 이름으로 유저를 찾아요.
-  // 3-1. 혹시 지금 빌리려는 책을 다른 사람이 빌린건 아닌지 확인해서 빌렸다면 예외
-  // 3-2. 빌릴 수 있는 책이면, UserLoanHistory 테이블에 데이터를 쌓아서, "대출 처리"를 해주겠습니다.
   @Transactional
   public void loanBook(BookLoanRequest request) {
-    // 1. 책 찾기
-    Book book = bookRepository.findByName(request.getBookName());
-    if (book == null) {
-      throw new IllegalArgumentException();
+    Book book = bookRepository.findByName(request.getBookName()).orElseThrow(IllegalArgumentException::new);
+    if (userLoanHistoryRepository.findByBookNameAndIsReturn(request.getBookName(), false) != null) {
+      throw new IllegalArgumentException("진작 대출되어 있는 책입니다");
     }
 
-    // 2. 유저 찾기
-    User user = userRepository.findByName(request.getUserName());
-    if (user == null) {
-      throw new IllegalArgumentException();
-    }
-
-    // 3-1. 대출중인 책이면 예외
-    if (userLoanHistoryRepository.existsByBookNameAndIsReturn(request.getBookName(), false)) {
-      throw new IllegalArgumentException("이미 대출 중인 책입니다.");
-    }
-
-    // 3-2. 대출 처리
-    UserLoanHistory history = new UserLoanHistory(user.getId(), request.getBookName(), false);
-    userLoanHistoryRepository.save(history);
+    User user = userRepository.findByName(request.getUserName()).orElseThrow(IllegalArgumentException::new);
+    user.loanBook(book);
   }
 
-  // 1. 들어오는 책을 찾는다. O
-  // 2. 들어오는 유저를 찾는다. O
-  // 3. 해당하는 대출 기록을 찾는다.
-  // 4. 대출 기록의 is_return을 true로 바꿔준다.
   @Transactional
   public void returnBook(BookReturnRequest request) {
-    // 1. 책 찾기
-    Book book = bookRepository.findByName(request.getBookName());
-    if (book == null) {
-      throw new IllegalArgumentException();
-    }
-
-    // 2. 유저 찾기
-    User user = userRepository.findByName(request.getUserName());
-    if (user == null) {
-      throw new IllegalArgumentException();
-    }
-
-    // 3. 대출 기록 찾기
-    UserLoanHistory history = userLoanHistoryRepository
-        .findByUserIdAndBookName(user.getId(), request.getBookName());
-    if (history == null) {
-      throw new IllegalArgumentException("책이 대출된 적이 없습니다.");
-    }
-
-    // is_return -> true (반납처리)
-    history.doReturn();
-    // userLoanHistoryRepository.save(history);
+    User user = userRepository.findByName(request.getUserName()).orElseThrow(IllegalArgumentException::new);
+    user.returnBook(request.getBookName());
   }
 
 }
