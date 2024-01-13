@@ -1,6 +1,6 @@
 package com.group.libraryapp.dto.book.request
 
-class BookReturnRequest(
+data class BookReturnRequest(
     val userName: String,
     val bookName: String
 )
