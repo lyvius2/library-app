@@ -1,14 +1,13 @@
 package com.group.libraryapp.domain.book
 
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
+import javax.persistence.*
 
 @Entity
 class Book constructor(
     val name: String,
-    val type: String,
+
+    @Enumerated(EnumType.STRING)
+    val type: BookType,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +22,7 @@ class Book constructor(
     companion object {
         fun fixture(
             name: String = "책 이름",
-            type: String = "COMPUTER",
+            type: BookType = BookType.COMPUTER,
             id: Long? = null,
         ): Book {
             return Book(
