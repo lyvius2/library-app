@@ -1,13 +1,13 @@
-package com.group.libraryapp;
+package com.group.libraryapp
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.Test
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest
-class LibraryAppApplicationTests {
-
-	@Test
-	void contextLoads() {
-	}
-
+@ActiveProfiles("local")
+internal class LibraryAppApplicationTests {
+    @Test
+    fun contextLoads() {
+    }
 }
