@@ -139,8 +139,8 @@ class BookServiceTest @Autowired constructor(
 
         // then
         assertThat(results).hasSize(2)
-        assertCount(results, BookType.COMPUTER, 2)
-        assertCount(results, BookType.SOCIETY, 1)
+        assertCount(results, BookType.COMPUTER, 2L)
+        assertCount(results, BookType.SOCIETY, 1L)
         /*
         val computerBook = results.first {
             book -> book.type == BookType.COMPUTER
@@ -153,7 +153,7 @@ class BookServiceTest @Autowired constructor(
          */
     }
 
-    private fun assertCount(results: List<BookStatResponse>, type: BookType, count: Int) {
+    private fun assertCount(results: List<BookStatResponse>, type: BookType, count: Long) {
         val bookTypes = results.first {
             book -> book.type == type
         }
